@@ -13,5 +13,6 @@ target_include_directories(GAL2D_OpenGL PUBLIC Source)
 
 target_link_libraries(GAL2D_OpenGL PUBLIC
 	GAL2D
-	OpenGL32.lib
+	opengl32.lib
+	glu32.lib
 )

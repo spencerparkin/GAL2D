@@ -53,7 +53,22 @@ void Rectangle::PointToUVs(Vector& UVs, const Vector& point) const
 
 void Rectangle::ExpandToMatchAspectRatio(double aspectRatio)
 {
-	// STPTODO: Write this.
+	double currentAspectRatio = this->AspectRatio();
+
+	if (currentAspectRatio < aspectRatio)
+	{
+		double delta = (this->Height() * aspectRatio - this->Width()) / 2.0;
+
+		this->minCorner.x -= delta;
+		this->maxCorner.x += delta;
+	}
+	else if(currentAspectRatio > aspectRatio)
+	{
+		double delta = (this->Width() / aspectRatio - this->Height()) / 2.0;
+
+		this->minCorner.y -= delta;
+		this->maxCorner.y += delta;
+	}
 }
 
 void Rectangle::ContractToMatchAspectRatio(double aspectRatio)

@@ -3,8 +3,6 @@
 set(GAL2D_TEST_SOURCES
 	Source/Main.cpp
 	Source/Main.h
-	Source/App.cpp
-	Source/App.h
 )
 
 add_executable(GAL2D_Test WIN32 ${GAL2D_TEST_SOURCES})

@@ -3,9 +3,11 @@
 #include "Math/Vector.h"
 #include "Math/Rectangle.h"
 #include "Math/Color.h"
+#include "Math/AffineTransform.h"
 #include <vector>
 #include <string>
 #include <memory>
+#include <functional>
 
 namespace GAL2D
 {
@@ -20,6 +22,32 @@ namespace GAL2D
 		Color color;
 	};
 
+	/**
+	 * This structure holds all state that presists between render calls
+	 * until a new render state is desired.
+	 */
+	struct RenderState
+	{
+		Rectangle worldRegion;
+		Rectangle clippingRegion;
+	};
+
+	enum MouseButton
+	{
+		Left,
+		Right,
+		Middle
+	};
+
+	enum ButtonState
+	{
+		Up,
+		Down
+	};
+
+	typedef std::function<void(const Vector&, MouseButton, ButtonState)> MouseEventHandler;
+	typedef std::function<void(int, ButtonState)> KeyboardEventHandler;
+
 	class Texture;
 	class Image;
 
@@ -27,34 +55,16 @@ namespace GAL2D
 	 * This is a platform-independent interface to a very basic rendering system.
 	 * A derivative of this class is meant to be created to provide a platform-specific
 	 * implementation of the rendering system.
+	 * 
+	 * This system isn't just for output to the screen.  It also handles input from
+	 * the keyboard and mouse.  It makes sense to handle input here too, because some
+	 * of that is in the context of the world region, such as where a mouse is clicked.
 	 */
 	class GraphicsInterface
 	{
 	public:
 		GraphicsInterface();
 		virtual ~GraphicsInterface();
-
-		/**
-		 * Set the sub-region of the plane where all rendering occurs.
-		 * This is used to map from world coordinates into device coordinates.
-		 */
-		void SetWorldRegion(const Rectangle& worldRegion);
-
-		/**
-		 * Return the sub-region of the plane where all renering occurs.
-		 */
-		const Rectangle& GetWorldRegion() const;
-
-		/**
-		 * Set the sub-region of the plane where rendering can occur.
-		 * Any rendering that would occur beyond this region is suppressed.
-		 */
-		void SetClippingRegion(const Rectangle& clippingRegion);
-
-		/**
-		 * Return the sub-region of the plane where rendering can occur.
-		 */
-		const Rectangle& GetClippingRegion() const;
 
 		/**
 		 * Get the system ready for rendering.  Whatever the rendering context,
@@ -68,6 +78,12 @@ namespace GAL2D
 		 * This should get called before the graphics interface is disposed.
 		 */
 		virtual void Shutdown() = 0;
+
+		/**
+		 * This is called to detect and dispatch keyboard and mouse events.  False is returned
+		 * when it is time for the program to exit.
+		 */
+		virtual bool HandleEvents() = 0;
 
 		/**
 		 * Load a texture from the given path and return it.
@@ -85,9 +101,10 @@ namespace GAL2D
 		 * Render a polygon over the top of whatever is in the plane where the given polygon resides.
 		 * 
 		 * @param[in] vertexArray These are the vertices of the polygon, which is assumed to be convex.
+		 * @param[in] worldTransform This is the transform applied to the vertices to get them into world space.
 		 * @param[in] texture If given, the UVs of the given vertices are used to map the texture to the polygon.
 		 */
-		virtual void RenderConvexPolygon(const std::vector<Vertex>& vertexArray, std::shared_ptr<Texture> texture = nullptr) = 0;
+		virtual void RenderConvexPolygon(const std::vector<Vertex>& vertexArray, const AffineTransform& worldTransform, std::shared_ptr<Texture> texture = nullptr) = 0;
 
 		/**
 		 * Render text over the top of whatever is in the plane such that it fits inside given rectangle, taking
@@ -120,9 +137,9 @@ namespace GAL2D
 		 */
 		virtual void EndRendering() = 0;
 
-	protected:
-
-		Rectangle worldRegion;
-		Rectangle clippingRegion;
+	public:
+		MouseEventHandler mouseEventHandler;
+		KeyboardEventHandler keyboardEventHandler;
+		RenderState renderState;
 	};
 }

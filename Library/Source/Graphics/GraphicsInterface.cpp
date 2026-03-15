@@ -12,26 +12,6 @@ GraphicsInterface::GraphicsInterface()
 {
 }
 
-void GraphicsInterface::SetWorldRegion(const Rectangle& worldRegion)
-{
-	this->worldRegion = worldRegion;
-}
-
-const Rectangle& GraphicsInterface::GetWorldRegion() const
-{
-	return this->worldRegion;
-}
-
-void GraphicsInterface::SetClippingRegion(const Rectangle& clippingRegion)
-{
-	this->clippingRegion = clippingRegion;
-}
-
-const Rectangle& GraphicsInterface::GetClippingRegion() const
-{
-	return this->clippingRegion;
-}
-
 /*virtual*/ std::shared_ptr<Texture> GraphicsInterface::MakeTexture(const std::string& texturePath)
 {
 	std::shared_ptr<Texture> texture = this->CreateNewBlankTexture();
