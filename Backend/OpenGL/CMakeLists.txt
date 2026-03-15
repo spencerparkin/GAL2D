@@ -1,0 +1,17 @@
+# CMakeLists.txt for OpenGL graphics implementation of GAL2D.
+
+set(GAL2D_OPENGL_SOURCES
+	Source/GraphicsOpenGL.cpp
+	Source/GraphicsOpenGL.h
+	Source/TextureOpenGL.cpp
+	Source/TextureOpenGL.h
+)
+
+add_library(GAL2D_OpenGL STATIC ${GAL2D_OPENGL_SOURCES})
+
+target_include_directories(GAL2D_OpenGL PUBLIC Source)
+
+target_link_libraries(GAL2D_OpenGL PUBLIC
+	GAL2D
+	OpenGL32.lib
+)
