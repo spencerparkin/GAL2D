@@ -5,6 +5,9 @@ using namespace GAL2D;
 
 Image::Image()
 {
+	this->width = 0;
+	this->height = 0;
+	this->matrix = nullptr;
 }
 
 /*virtual*/ Image::~Image()
@@ -14,13 +17,73 @@ Image::Image()
 
 bool Image::Load(const std::string& imagePath)
 {
-	// STPTODO: Look at extension to create image format read/writer class.
-	return false;
+	bool success = false;
+	unsigned char* pixelData = nullptr;
+
+	do
+	{
+		int numChannels = 0;
+		int imageWidth = 0;
+		int imageHeight = 0;
+		
+		pixelData = stbi_load(imagePath.c_str(), &imageWidth, &imageHeight, &numChannels, 0);
+		if (!pixelData)
+			break;
+
+		if (imageWidth <= 0 || imageHeight <= 0)
+			break;
+
+		if (numChannels < 1 || numChannels > 4)
+			break;
+
+		this->SetDimensions(imageWidth, imageHeight);
+
+		unsigned char* pixel = pixelData;
+
+		for (int row = 0; row < this->height; row++)
+		{
+			for (int col = 0; col < this->width; col++)
+			{
+				Color& color = this->matrix[row][col];
+
+				switch (numChannels)
+				{
+					case 1:
+					case 2:
+					{
+						color.r = double(pixel[0]) / 255.0;
+						color.g = double(pixel[0]) / 255.0;
+						color.b = double(pixel[0]) / 255.0;
+						color.a = (numChannels == 1) ? 1.0 : (double(pixel[1]) / 255.0);
+						break;
+					}
+					case 3:
+					case 4:
+					{
+						color.r = double(pixel[0]) / 255.0;
+						color.g = double(pixel[1]) / 255.0;
+						color.b = double(pixel[2]) / 255.0;
+						color.a = (numChannels == 4) ? 1.0 : (double(pixel[3]) / 255.0);
+						break;
+					}
+				}
+
+				pixel += numChannels;
+			}
+		}
+
+		success = true;
+	} while (false);
+
+	if (pixelData)
+		stbi_image_free(pixelData);
+
+	return success;
 }
 
 bool Image::Save(const std::string& imagePath) const
 {
-	// STPTODO: Look at extension to create image format read/writer class.
+	// STPTODO: Write this.
 	return false;
 }
 

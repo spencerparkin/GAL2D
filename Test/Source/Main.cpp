@@ -22,20 +22,22 @@ int WINAPI WinMain(HINSTANCE instanceHandle, HINSTANCE prevInstanceHandle, LPSTR
 	graphics->renderState.worldRegion.minCorner.y = -10.0;
 	graphics->renderState.worldRegion.maxCorner.y = 10.0;
 
+	std::shared_ptr<GAL2D::Texture> texture = graphics->MakeTexture("D:\\git_repos\\GAL2D\\Test\\flower.jpg");
+
 	while (graphics->HandleEvents())
 	{
 		graphics->BeginRendering();
 
 		std::vector<GAL2D::Vertex> vertexArray;
 		vertexArray.push_back({ GAL2D::Vector(-5.0, -5.0), GAL2D::Vector(0.0, 0.0), GAL2D::Color(1.0, 0.0, 0.0, 1.0) });
-		vertexArray.push_back({ GAL2D::Vector(5.0, -5.0), GAL2D::Vector(0.0, 0.0), GAL2D::Color(0.0, 1.0, 0.0, 1.0) });
-		vertexArray.push_back({ GAL2D::Vector(5.0, 5.0), GAL2D::Vector(0.0, 0.0), GAL2D::Color(0.0, 0.0, 1.0, 1.0) });
-		vertexArray.push_back({ GAL2D::Vector(-5.0, 5.0), GAL2D::Vector(0.0, 0.0), GAL2D::Color(1.0, 0.0, 1.0, 1.0) });
+		vertexArray.push_back({ GAL2D::Vector(5.0, -5.0), GAL2D::Vector(1.0, 0.0), GAL2D::Color(0.0, 1.0, 0.0, 1.0) });
+		vertexArray.push_back({ GAL2D::Vector(5.0, 5.0), GAL2D::Vector(1.0, 1.0), GAL2D::Color(0.0, 0.0, 1.0, 1.0) });
+		vertexArray.push_back({ GAL2D::Vector(-5.0, 5.0), GAL2D::Vector(0.0, 1.0), GAL2D::Color(1.0, 0.0, 1.0, 1.0) });
 
 		GAL2D::AffineTransform worldTransform;
 		worldTransform.MakeIdentity();
 
-		graphics->RenderConvexPolygon(vertexArray, worldTransform);
+		graphics->RenderConvexPolygon(vertexArray, worldTransform, texture);
 
 		graphics->EndRendering();
 	}

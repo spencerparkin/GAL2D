@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Graphics/Texture.h"
+#include <Windows.h>
+#include <gl/GL.h>
 
 namespace GAL2D
 {
@@ -16,7 +18,11 @@ namespace GAL2D
 		virtual bool FromImage(const Image& image) override;
 		virtual bool ToImage(Image& image) const override;
 
+		GLuint GetTexture() const;
+
 	private:
-		int texture;
+		GLuint texture;
+		GLuint width;
+		GLuint height;
 	};
 }

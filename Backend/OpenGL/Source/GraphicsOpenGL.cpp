@@ -200,9 +200,18 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 {
 	//glScissor(...)
 
+	glDisable(GL_TEXTURE_2D);
+	bool texturing = false;
+
 	if (texture.get())
 	{
-		//...
+		TextureOpenGL* textureGL = dynamic_cast<TextureOpenGL*>(texture.get());
+		if (textureGL)
+		{
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, textureGL->GetTexture());
+			texturing = true;
+		}
 	}
 
 	glBegin(GL_POLYGON);
@@ -211,8 +220,11 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 	{
 		Vector worldPosition = worldTransform * vertex.position;
 
-		glColor4d(vertex.color.r, vertex.color.g, vertex.color.b, vertex.color.a);
-		glTexCoord2d(vertex.UVs.x, vertex.UVs.y);
+		if (texturing)
+			glTexCoord2d(vertex.UVs.x, vertex.UVs.y);
+		else
+			glColor4d(vertex.color.r, vertex.color.g, vertex.color.b, vertex.color.a);
+		
 		glVertex2d(worldPosition.x, worldPosition.y);
 	}
 
