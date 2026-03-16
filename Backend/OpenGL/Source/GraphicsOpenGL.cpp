@@ -70,6 +70,8 @@ GraphicsOpenGL::GraphicsOpenGL(HINSTANCE instanceHandle, int cmdShow, const std:
 	ShowWindow(this->windowHandle, this->cmdShow);
 	UpdateWindow(this->windowHandle);
 
+	this->exitSignaled = false;
+
 	return true;
 }
 

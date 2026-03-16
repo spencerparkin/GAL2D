@@ -1,4 +1,5 @@
 #include "Graphics/Image.h"
+#include "ThirdParty/stb_image.h"
 
 using namespace GAL2D;
 

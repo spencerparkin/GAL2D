@@ -9,6 +9,8 @@
 #include <memory>
 #include <functional>
 
+// STPTODO: Maybe leverage code in font-system I had made years ago to make image and char-to-uv map.  Use freetype lib.
+
 namespace GAL2D
 {
 	/**
@@ -53,10 +55,10 @@ namespace GAL2D
 
 	/**
 	 * This is a platform-independent interface to a very basic rendering system.
-	 * A derivative of this class is meant to be created to provide a platform-specific
+	 * A derivatives of this class are meant to provide a platform-specific
 	 * implementation of the rendering system.
 	 * 
-	 * This system isn't just for output to the screen.  It also handles input from
+	 * The system isn't just for output to the screen.  It also handles input from
 	 * the keyboard and mouse.  It makes sense to handle input here too, because some
 	 * of that is in the context of the world region, such as where a mouse is clicked.
 	 */

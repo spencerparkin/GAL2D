@@ -5,7 +5,7 @@
 namespace GAL2D
 {
 	/**
-	 * These are 2-dimensional rectangles in the plane.
+	 * These are 2-dimensional, axis-aligned rectangles in the plane.
 	 */
 	class Rectangle
 	{

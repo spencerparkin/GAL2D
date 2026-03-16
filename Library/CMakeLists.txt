@@ -17,6 +17,8 @@ set(GAL2D_SOURCES
 	Source/Graphics/Texture.h
 	Source/Graphics/Image.cpp
 	Source/Graphics/Image.h
+	Source/ThirdParty/stb_image.cpp
+	Source/ThirdParty/stb_image.h
 )
 
 add_library(GAL2D STATIC ${GAL2D_SOURCES})
