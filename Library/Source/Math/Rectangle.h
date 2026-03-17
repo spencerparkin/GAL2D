@@ -23,6 +23,7 @@ namespace GAL2D
 		void ExpandToMatchAspectRatio(double aspectRatio);
 		void ContractToMatchAspectRatio(double aspectRatio);
 		void MinimallyExpandToIncludePoint(const Vector& point);
+		void MinimallyExpandToIncludeRect(const Rectangle& rectangle);
 
 		double Area() const;
 		double Width() const;
@@ -33,4 +34,7 @@ namespace GAL2D
 		Vector minCorner;
 		Vector maxCorner;
 	};
+
+	Rectangle operator+(const Rectangle& rectangle, const Vector& vector);
+	Rectangle operator-(const Rectangle& rectangle, const Vector& vector);
 }

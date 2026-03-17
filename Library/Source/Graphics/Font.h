@@ -21,8 +21,7 @@ namespace GAL2D
 
 		bool Load(const std::string& fontPath);
 
-	private:
-		std::shared_ptr<Texture> texture;
+		std::shared_ptr<Texture> GetAtlasTexture();
 
 		struct GlyphInfo
 		{
@@ -31,6 +30,10 @@ namespace GAL2D
 			Vector penAdvance;
 		};
 
+		bool GetGlyphInfo(char glyphChar, GlyphInfo& glyphInfo) const;
+
+	private:
+		std::shared_ptr<Texture> texture;
 		std::unordered_map<char, GlyphInfo> glyphInfoMap;
 	};
 }

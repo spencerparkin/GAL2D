@@ -4,6 +4,8 @@
 
 namespace GAL2D
 {
+	class Rectangle;
+
 	/**
 	 * These are vector-valued functions of a vector variable, each performing
 	 * an affine transformation, which is a linear transformation followed by
@@ -20,12 +22,14 @@ namespace GAL2D
 
 		void operator=(const AffineTransform& affineTransform);
 		Vector operator*(const Vector& vector) const;
+		Rectangle operator*(const Rectangle& rectangle) const;
 
 		AffineTransform Inverse() const;
 
 		void MakeIdentity();
 		void MakeTranslation(const Vector& translation);
 		void MakeRigidBodyTransform(double angle, Vector& translation);
+		void MakeTransform(const Rectangle& sourceRect, const Rectangle& targetRect);
 
 	public:
 		LinearTransform linearTransform;

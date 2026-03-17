@@ -31,6 +31,18 @@ void Vector::operator=(const Vector& vector)
 	this->y = vector.y;
 }
 
+void Vector::operator+=(const Vector& vector)
+{
+	this->x += vector.x;
+	this->y += vector.y;
+}
+
+void Vector::operator-=(const Vector& vector)
+{
+	this->x -= vector.x;
+	this->y -= vector.y;
+}
+
 void Vector::operator*=(double scalar)
 {
 	this->x *= scalar;
@@ -41,6 +53,14 @@ void Vector::operator/=(double scalar)
 {
 	this->x /= scalar;
 	this->y /= scalar;
+}
+
+Vector Vector::operator-() const
+{
+	return Vector(
+		-this->x,
+		-this->y
+	);
 }
 
 double Vector::Length() const

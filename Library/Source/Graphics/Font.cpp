@@ -41,13 +41,13 @@ bool Font::Load(const std::string& fontPath)
 
 		Image atlasImage;
 		atlasImage.SetDimensions(1024, 1024);
-		atlasImage.Clear(Color(0.0, 0.0, 0.0, 0.0));
+		atlasImage.Clear(Color(1.0, 1.0, 1.0, 0.0));
 
 		int charWidth = 64;
 		int charHeight = 64;
 
 		int numAtlasRows = atlasImage.GetHeight() / charHeight;
-		int numAtlasCols = atlasImage.GetWidth() / charHeight;
+		int numAtlasCols = atlasImage.GetWidth() / charWidth;
 
 		if (256 > numAtlasRows * numAtlasCols)
 			break;
@@ -79,17 +79,15 @@ bool Font::Load(const std::string& fontPath)
 			// Calculate the UV-space rectangle that fits the glyph.
 			GlyphInfo glyphInfo{};
 			glyphInfo.uvRect.minCorner.x = double(atlasColOffset) / double(atlasImage.GetWidth());
-			glyphInfo.uvRect.minCorner.y = double(atlasRowOffset) / double(atlasImage.GetHeight());
+			glyphInfo.uvRect.minCorner.y = 1.0 - double(atlasRowOffset + slot->bitmap.rows) / double(atlasImage.GetHeight());
 			glyphInfo.uvRect.maxCorner.x = double(atlasColOffset + slot->bitmap.width) / double(atlasImage.GetWidth());
-			glyphInfo.uvRect.maxCorner.y = double(atlasRowOffset + slot->bitmap.rows) / double(atlasImage.GetHeight());
+			glyphInfo.uvRect.maxCorner.y = 1.0 - double(atlasRowOffset) / double(atlasImage.GetHeight());
 
-			// Note that it won't matter what units the advance and offsets here are in as long as
-			// they're consistent, because we'll scale the text to fit as needed into the space alotted.
-			// The units here are in pixels, but again, that shouldn't matter.
-			glyphInfo.penOffset.x = double(slot->bitmap_left);
-			glyphInfo.penOffset.y = double(slot->bitmap_top - slot->bitmap.rows);
-			glyphInfo.penAdvance.x = double(slot->advance.x / 64);
-			glyphInfo.penAdvance.y = double(slot->advance.y / 64);
+			// We're going to work with these variables in UV-space as well.
+			glyphInfo.penOffset.x = double(slot->bitmap_left) / double(atlasImage.GetWidth());
+			glyphInfo.penOffset.y = double(slot->bitmap_top - slot->bitmap.rows) / double(atlasImage.GetHeight());
+			glyphInfo.penAdvance.x = double(slot->advance.x / 64) / double(atlasImage.GetWidth());
+			glyphInfo.penAdvance.y = double(slot->advance.y / 64) / double(atlasImage.GetHeight());
 
 			this->glyphInfoMap.insert(std::pair(char(i), glyphInfo));
 
@@ -123,9 +121,9 @@ bool Font::Load(const std::string& fontPath)
 							else if (alpha < 0.0)
 								alpha = 0.0;
 
-							atlasPixel.r = 0.0;
-							atlasPixel.g = 0.0;
-							atlasPixel.b = 0.0;
+							atlasPixel.r = 1.0;
+							atlasPixel.g = 1.0;
+							atlasPixel.b = 1.0;
 							atlasPixel.a = alpha;
 
 							break;
@@ -159,4 +157,19 @@ bool Font::Load(const std::string& fontPath)
 	}
 
 	return success;
+}
+
+std::shared_ptr<Texture> Font::GetAtlasTexture()
+{
+	return this->texture;
+}
+
+bool Font::GetGlyphInfo(char glyphChar, GlyphInfo& glyphInfo) const
+{
+	std::unordered_map<char, GlyphInfo>::const_iterator iter = this->glyphInfoMap.find(glyphChar);
+	if (iter == this->glyphInfoMap.cend())
+		return false;
+
+	glyphInfo = iter->second;
+	return true;
 }

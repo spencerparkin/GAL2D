@@ -42,10 +42,10 @@ int WINAPI WinMain(HINSTANCE instanceHandle, HINSTANCE prevInstanceHandle, LPSTR
 		graphics->RenderConvexPolygon(vertexArray, worldTransform, texture);
 
 		GAL2D::Rectangle textRect;
-		textRect.minCorner.x = 0.0;
+		textRect.minCorner.x = -5.0;
 		textRect.minCorner.y = 0.0;
-		textRect.maxCorner.x = 10.0;
-		textRect.maxCorner.y = 10.0;
+		textRect.maxCorner.x = 5.0;
+		textRect.maxCorner.y = 5.0;
 
 		GAL2D::Color color(1.0, 0.0, 0.0, 1.0);
 

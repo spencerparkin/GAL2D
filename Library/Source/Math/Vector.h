@@ -14,8 +14,11 @@ namespace GAL2D
 		virtual ~Vector();
 
 		void operator=(const Vector& vector);
+		void operator+=(const Vector& vector);
+		void operator-=(const Vector& vector);
 		void operator*=(double scalar);
 		void operator/=(double scalar);
+		Vector operator-() const;
 
 		double Length() const;
 		double Dot(const Vector& vector) const;

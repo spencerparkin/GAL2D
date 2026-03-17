@@ -1,5 +1,6 @@
 #include "GraphicsOpenGL.h"
 #include "TextureOpenGL.h"
+#include "Graphics/Font.h"
 #include <windowsx.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>
@@ -37,7 +38,7 @@ GraphicsOpenGL::GraphicsOpenGL(HINSTANCE instanceHandle, int cmdShow, const std:
 	winClass.lpszClassName = "GraphicsOpenGLWindow";
 	ATOM atom = RegisterClassEx(&winClass);
 
-	this->windowHandle = CreateWindow(winClass.lpszClassName, this->windowTitle.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, nullptr, nullptr, this->instanceHandle, nullptr);
+	this->windowHandle = CreateWindow(winClass.lpszClassName, this->windowTitle.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 800, nullptr, nullptr, this->instanceHandle, nullptr);
 	if (!this->windowHandle)
 		return false;
 
@@ -200,6 +201,8 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 {
 	//glScissor(...)
 
+	glDisable(GL_BLEND);
+
 	glDisable(GL_TEXTURE_2D);
 	bool texturing = false;
 
@@ -210,11 +213,15 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 		{
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, textureGL->GetTexture());
+			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			texturing = true;
 		}
 	}
 
 	glBegin(GL_POLYGON);
+
+	if (texturing)
+		glColor4d(1.0, 1.0, 1.0, 1.0);
 
 	for (const Vertex& vertex : vertexArray)
 	{
@@ -233,8 +240,85 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 
 /*virtual*/ bool GraphicsOpenGL::RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color)
 {
-	// STPTODO: Write this.
-	return false;
+	if (!font.get())
+		return false;
+
+	std::shared_ptr<Texture> atlasTexture = font->GetAtlasTexture();
+	if (!atlasTexture.get())
+		return false;
+
+	TextureOpenGL* textureGL = dynamic_cast<TextureOpenGL*>(atlasTexture.get());
+	if (!textureGL)
+		return false;
+	
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, textureGL->GetTexture());
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	Vector penLocation(0.0, 0.0);
+	
+	struct GlyphQuad
+	{
+		Rectangle localRect;
+		Rectangle uvRect;
+	};
+
+	std::vector<GlyphQuad> quadArray;
+
+	for (int i = 0; text.c_str()[i] != '\0'; i++)
+	{
+		char glyphChar = text.c_str()[i];
+
+		Font::GlyphInfo glyphInfo;
+		if (!font->GetGlyphInfo(glyphChar, glyphInfo))
+			return false;
+
+		GlyphQuad quad;
+		quad.localRect = glyphInfo.uvRect + (penLocation + glyphInfo.penOffset - glyphInfo.uvRect.minCorner);
+		quad.uvRect = glyphInfo.uvRect;
+
+		quadArray.push_back(quad);
+
+		penLocation += glyphInfo.penAdvance;
+	}
+
+	Rectangle textBounds;
+	for (const GlyphQuad& quad : quadArray)
+		textBounds.MinimallyExpandToIncludeRect(quad.localRect);
+
+	Rectangle targetRect = rectangle;
+	targetRect.ContractToMatchAspectRatio(textBounds.AspectRatio());
+
+	AffineTransform worldTransform;
+	worldTransform.MakeTransform(textBounds, targetRect);
+
+	glBegin(GL_QUADS);
+
+	glColor4d(color.r, color.g, color.b, color.a);
+
+	for (const GlyphQuad& quad : quadArray)
+	{
+		Rectangle worldRect = worldTransform * quad.localRect;
+		
+		glTexCoord2d(quad.uvRect.minCorner.x, quad.uvRect.minCorner.y);
+		glVertex2d(worldRect.minCorner.x, worldRect.minCorner.y);
+
+		glTexCoord2d(quad.uvRect.maxCorner.x, quad.uvRect.minCorner.y);
+		glVertex2d(worldRect.maxCorner.x, worldRect.minCorner.y);
+
+		glTexCoord2d(quad.uvRect.maxCorner.x, quad.uvRect.maxCorner.y);
+		glVertex2d(worldRect.maxCorner.x, worldRect.maxCorner.y);
+
+		glTexCoord2d(quad.uvRect.minCorner.x, quad.uvRect.maxCorner.y);
+		glVertex2d(worldRect.minCorner.x, worldRect.maxCorner.y);
+	}
+
+	glEnd();
+
+	return true;
 }
 
 /*virtual*/ bool GraphicsOpenGL::CaptureRegion(const Rectangle& region, Image& image)
@@ -245,6 +329,7 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 
 /*virtual*/ void GraphicsOpenGL::BeginRendering()
 {
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	RECT windowRect;

@@ -1,9 +1,15 @@
 #include "Math/Rectangle.h"
+#include <limits>
 
 using namespace GAL2D;
 
 Rectangle::Rectangle()
 {
+	// This rectangle is ready for expansion.
+	this->minCorner.x = std::numeric_limits<double>::max();
+	this->minCorner.y = std::numeric_limits<double>::max();
+	this->maxCorner.x = -std::numeric_limits<double>::max();
+	this->maxCorner.y = -std::numeric_limits<double>::max();
 }
 
 Rectangle::Rectangle(const Vector& minCorner, const Vector& maxCorner)
@@ -73,12 +79,40 @@ void Rectangle::ExpandToMatchAspectRatio(double aspectRatio)
 
 void Rectangle::ContractToMatchAspectRatio(double aspectRatio)
 {
-	// STPTODO: Write this.
+	double currentAspectRatio = this->AspectRatio();
+
+	if (currentAspectRatio < aspectRatio)
+	{
+		double delta = (this->Height() - this->Width() / aspectRatio) / 2.0;
+
+		this->minCorner.y += delta;
+		this->maxCorner.y -= delta;
+	}
+	else if (currentAspectRatio > aspectRatio)
+	{
+		double delta = (this->Height() * aspectRatio - this->Width()) / 2.0;
+
+		this->minCorner.x += delta;
+		this->maxCorner.x -= delta;
+	}
 }
 
 void Rectangle::MinimallyExpandToIncludePoint(const Vector& point)
 {
-	// STPTODO: Write this.
+	if (this->minCorner.x > point.x)
+		this->minCorner.x = point.x;
+	if (this->maxCorner.x < point.x)
+		this->maxCorner.x = point.x;
+	if (this->minCorner.y > point.y)
+		this->minCorner.y = point.y;
+	if (this->maxCorner.y < point.y)
+		this->maxCorner.y = point.y;
+}
+
+void Rectangle::MinimallyExpandToIncludeRect(const Rectangle& rectangle)
+{
+	this->MinimallyExpandToIncludePoint(rectangle.minCorner);
+	this->MinimallyExpandToIncludePoint(rectangle.maxCorner);
 }
 
 double Rectangle::Area() const
@@ -99,4 +133,23 @@ double Rectangle::Height() const
 double Rectangle::AspectRatio() const
 {
 	return this->Width() / this->Height();
+}
+
+namespace GAL2D
+{
+	Rectangle operator+(const Rectangle& rectangle, const Vector& vector)
+	{
+		return Rectangle(
+			rectangle.minCorner + vector,
+			rectangle.maxCorner + vector
+		);
+	}
+
+	Rectangle operator-(const Rectangle& rectangle, const Vector& vector)
+	{
+		return Rectangle(
+			rectangle.minCorner - vector,
+			rectangle.maxCorner - vector
+		);
+	}
 }
