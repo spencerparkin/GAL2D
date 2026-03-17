@@ -24,6 +24,8 @@ int WINAPI WinMain(HINSTANCE instanceHandle, HINSTANCE prevInstanceHandle, LPSTR
 
 	std::shared_ptr<GAL2D::Texture> texture = graphics->MakeTexture("D:\\git_repos\\GAL2D\\Test\\flower.jpg");
 
+	std::shared_ptr<GAL2D::Font> font = graphics->MakeFont("D:\\git_repos\\GAL2D\\Test\\UbuntuMono_R.ttf");
+
 	while (graphics->HandleEvents())
 	{
 		graphics->BeginRendering();
@@ -38,6 +40,16 @@ int WINAPI WinMain(HINSTANCE instanceHandle, HINSTANCE prevInstanceHandle, LPSTR
 		worldTransform.MakeIdentity();
 
 		graphics->RenderConvexPolygon(vertexArray, worldTransform, texture);
+
+		GAL2D::Rectangle textRect;
+		textRect.minCorner.x = 0.0;
+		textRect.minCorner.y = 0.0;
+		textRect.maxCorner.x = 10.0;
+		textRect.maxCorner.y = 10.0;
+
+		GAL2D::Color color(1.0, 0.0, 0.0, 1.0);
+
+		graphics->RenderText("Here is some text!", font, textRect, color);
 
 		graphics->EndRendering();
 	}

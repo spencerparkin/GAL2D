@@ -191,7 +191,7 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 	return !this->exitSignaled;
 }
 
-/*virtual*/ std::shared_ptr<Texture> GraphicsOpenGL::CreateNewBlankTexture()
+/*virtual*/ std::shared_ptr<Texture> GraphicsOpenGL::CreateNewTextureObject()
 {
 	return std::make_shared<TextureOpenGL>();
 }
@@ -231,7 +231,7 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 	glEnd();
 }
 
-/*virtual*/ bool GraphicsOpenGL::RenderText(const std::string& text, const std::string& font, const Rectangle& rectangle, const Color& color)
+/*virtual*/ bool GraphicsOpenGL::RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color)
 {
 	// STPTODO: Write this.
 	return false;

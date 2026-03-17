@@ -1,5 +1,7 @@
 #include "Graphics/Image.h"
 #include "ThirdParty/stb_image.h"
+#include "ThirdParty/stb_image_write.h"
+#include <filesystem>
 
 using namespace GAL2D;
 
@@ -83,7 +85,35 @@ bool Image::Load(const std::string& imagePath)
 
 bool Image::Save(const std::string& imagePath) const
 {
-	// STPTODO: Write this.
+	if (this->width == 0 || this->height == 0)
+		return false;
+
+	std::unique_ptr<unsigned char> pixelData(new unsigned char[this->width * this->height * 4]);
+
+	unsigned char* pixel = pixelData.get();
+
+	for (int row = 0; row < this->height; row++)
+	{
+		for (int col = 0; col < this->width; col++)
+		{
+			const Color& color = this->matrix[row][col];
+
+			pixel[0] = unsigned char(color.r * 255.0);
+			pixel[1] = unsigned char(color.g * 255.0);
+			pixel[2] = unsigned char(color.b * 255.0);
+			pixel[3] = unsigned char(color.a * 255.0);
+
+			pixel += 4;
+		}
+	}
+
+	std::string ext = std::filesystem::path(imagePath).extension().string();
+
+	if (ext == ".png")
+		return stbi_write_png(imagePath.c_str(), this->width, this->height, 4, pixelData.get(), this->width * 4) != 0;
+	else if (ext == ".jpg")
+		return stbi_write_jpg(imagePath.c_str(), this->width, this->height, 4, pixelData.get(), 100) != 0;
+	
 	return false;
 }
 

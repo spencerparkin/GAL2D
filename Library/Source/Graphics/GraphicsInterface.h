@@ -52,6 +52,7 @@ namespace GAL2D
 
 	class Texture;
 	class Image;
+	class Font;
 
 	/**
 	 * This is a platform-independent interface to a very basic rendering system.
@@ -95,9 +96,16 @@ namespace GAL2D
 		virtual std::shared_ptr<Texture> MakeTexture(const std::string& texturePath);
 
 		/**
-		 * Allocate and return a platform-specific texture that, once loaded with texel data, can be used for rendering.
+		 * Load a font from the given path and return it.
+		 * 
+		 * @return A valid pointer should be returned here on success; null otherwise.
 		 */
-		virtual std::shared_ptr<Texture> CreateNewBlankTexture() = 0;
+		virtual std::shared_ptr<Font> MakeFont(const std::string& fontPath);
+
+		/**
+		 * Allocate and return a platform-specific texture object that, once loaded with texel data, can be used for rendering.
+		 */
+		virtual std::shared_ptr<Texture> CreateNewTextureObject() = 0;
 
 		/**
 		 * Render a polygon over the top of whatever is in the plane where the given polygon resides.
@@ -109,16 +117,16 @@ namespace GAL2D
 		virtual void RenderConvexPolygon(const std::vector<Vertex>& vertexArray, const AffineTransform& worldTransform, std::shared_ptr<Texture> texture = nullptr) = 0;
 
 		/**
-		 * Render text over the top of whatever is in the plane such that it fits inside given rectangle, taking
+		 * Render text over the top of whatever is in the plane such that it fits inside the given rectangle, taking
 		 * up as much room as possible within that rectangle.
 		 * 
 		 * @param[in] text This is the text to render.
-		 * @param[in] font This is the named font to use.  The underlying driver is responsible for loading and caching fonts on its own.
+		 * @param[in] font This is the font to use when rendering the text.  See @ref MakeFont.
 		 * @param[in] rectangle This dictates the placement and size of the text in the world.
 		 * @param[in] color This is the color to use for the text.
 		 * @return False returned here indicates failure, and can happen if, for example, the given font doesn't exit or can't be loaded by the driver.
 		 */
-		virtual bool RenderText(const std::string& text, const std::string& font, const Rectangle& rectangle, const Color& color) = 0;
+		virtual bool RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color) = 0;
 
 		/**
 		 * This can be optionally overridden to provide pixel-capture support.

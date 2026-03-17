@@ -18,9 +18,9 @@ namespace GAL2D
 		virtual bool Setup() override;
 		virtual void Shutdown() override;
 		virtual bool HandleEvents() override;
-		virtual std::shared_ptr<Texture> CreateNewBlankTexture() override;
+		virtual std::shared_ptr<Texture> CreateNewTextureObject() override;
 		virtual void RenderConvexPolygon(const std::vector<Vertex>& vertexArray, const AffineTransform& worldTransform, std::shared_ptr<Texture> texture = nullptr) override;
-		virtual bool RenderText(const std::string& text, const std::string& font, const Rectangle& rectangle, const Color& color) override;
+		virtual bool RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color) override;
 		virtual bool CaptureRegion(const Rectangle& region, Image& image) override;
 		virtual void BeginRendering() override;
 		virtual void EndRendering() override;
