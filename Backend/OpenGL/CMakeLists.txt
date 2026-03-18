@@ -5,6 +5,8 @@ set(GAL2D_OPENGL_SOURCES
 	Source/GraphicsOpenGL.h
 	Source/TextureOpenGL.cpp
 	Source/TextureOpenGL.h
+	Source/GAL2DMakeInterface.cpp
+	Source/GAL2DMakeInterface.h
 )
 
 add_library(GAL2D_OpenGL STATIC ${GAL2D_OPENGL_SOURCES})

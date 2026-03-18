@@ -7,11 +7,11 @@
 
 using namespace GAL2D;
 
-GraphicsOpenGL::GraphicsOpenGL(HINSTANCE instanceHandle, int cmdShow, const std::string& windowTitle)
+GraphicsOpenGL::GraphicsOpenGL(const DriverInitData* driverInitData)
 {
-	this->instanceHandle = instanceHandle;
-	this->cmdShow = cmdShow;
-	this->windowTitle = windowTitle;
+	this->instanceHandle = driverInitData->instanceHandle;
+	this->cmdShow = driverInitData->cmdShow;
+	this->windowTitle = driverInitData->windowTitle;
 	this->windowHandle = NULL;
 	this->deviceContext = NULL;
 	this->openGLContext = NULL;

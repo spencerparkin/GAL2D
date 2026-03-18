@@ -7,12 +7,23 @@
 namespace GAL2D
 {
 	/**
+	 * Every backend driver should make a structure with this very same name.
+	 * The contents can very, but the structure name should be the same.
+	 */
+	struct DriverInitData
+	{
+		HINSTANCE instanceHandle;
+		int cmdShow;
+		std::string windowTitle;
+	};
+
+	/**
 	 * Implement GAL2D's graphics interface with OpenGL on Windows.
 	 */
 	class GraphicsOpenGL : public GraphicsInterface
 	{
 	public:
-		GraphicsOpenGL(HINSTANCE instanceHandle, int cmdShow, const std::string& windowTitle);
+		GraphicsOpenGL(const DriverInitData* driverInitData);
 		virtual ~GraphicsOpenGL();
 
 		virtual bool Setup() override;

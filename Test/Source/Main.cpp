@@ -1,15 +1,15 @@
 #include "Main.h"
-#if defined USING_OPENGL
-#	include "GraphicsOpenGL.h"
-#endif
+#include "GAL2DMakeInterface.h"
+#include <Windows.h>
 
 int WINAPI WinMain(HINSTANCE instanceHandle, HINSTANCE prevInstanceHandle, LPSTR cmdLine, int cmdShow)
 {
-#if defined USING_OPENGL
-	std::shared_ptr<GAL2D::GraphicsInterface> graphics = std::make_shared<GAL2D::GraphicsOpenGL>(instanceHandle, cmdShow, "GAL2D Test App");
-#else
-#   error Graphics driver not specified or not supported.
-#endif
+	GAL2D::DriverInitData driverInitData;
+	driverInitData.instanceHandle = instanceHandle;
+	driverInitData.cmdShow = cmdShow;
+	driverInitData.windowTitle = "GAL2D Test App";
+
+	std::shared_ptr<GAL2D::GraphicsInterface> graphics = GAL2D::CreateGraphicsInterface(&driverInitData);
 
 	if (!graphics->Setup())
 	{
