@@ -9,9 +9,10 @@ using namespace GAL2D;
 
 GraphicsOpenGL::GraphicsOpenGL(const DriverInitData* driverInitData)
 {
-	this->instanceHandle = driverInitData->instanceHandle;
-	this->cmdShow = driverInitData->cmdShow;
+	this->instanceHandle = driverInitData->instanceHandle ? driverInitData->instanceHandle : (HINSTANCE)GetModuleHandle(NULL);
 	this->windowTitle = driverInitData->windowTitle;
+	this->windowWidth = driverInitData->windowWidth;
+	this->windowHeight = driverInitData->windowHeight;
 	this->windowHandle = NULL;
 	this->deviceContext = NULL;
 	this->openGLContext = NULL;
@@ -38,7 +39,7 @@ GraphicsOpenGL::GraphicsOpenGL(const DriverInitData* driverInitData)
 	winClass.lpszClassName = "GraphicsOpenGLWindow";
 	ATOM atom = RegisterClassEx(&winClass);
 
-	this->windowHandle = CreateWindow(winClass.lpszClassName, this->windowTitle.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 800, nullptr, nullptr, this->instanceHandle, nullptr);
+	this->windowHandle = CreateWindow(winClass.lpszClassName, this->windowTitle.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, this->windowWidth, this->windowHeight, nullptr, nullptr, this->instanceHandle, nullptr);
 	if (!this->windowHandle)
 		return false;
 
@@ -68,7 +69,7 @@ GraphicsOpenGL::GraphicsOpenGL(const DriverInitData* driverInitData)
 
 	glClearColor(0.0, 0.0, 0.0, 1.0f);
 
-	ShowWindow(this->windowHandle, this->cmdShow);
+	ShowWindow(this->windowHandle, SW_SHOW);
 	UpdateWindow(this->windowHandle);
 
 	this->exitSignaled = false;
@@ -329,7 +330,6 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 
 /*virtual*/ void GraphicsOpenGL::BeginRendering()
 {
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	RECT windowRect;

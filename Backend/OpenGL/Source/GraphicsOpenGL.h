@@ -13,8 +13,9 @@ namespace GAL2D
 	struct DriverInitData
 	{
 		HINSTANCE instanceHandle;
-		int cmdShow;
 		std::string windowTitle;
+		int windowWidth;
+		int windowHeight;
 	};
 
 	/**
@@ -45,8 +46,9 @@ namespace GAL2D
 
 	private:
 		std::string windowTitle;
+		int windowWidth;
+		int windowHeight;
 		HINSTANCE instanceHandle;
-		int cmdShow;
 		HWND windowHandle;
 		HDC deviceContext;
 		HGLRC openGLContext;

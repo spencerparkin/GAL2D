@@ -6,8 +6,9 @@ int WINAPI WinMain(HINSTANCE instanceHandle, HINSTANCE prevInstanceHandle, LPSTR
 {
 	GAL2D::DriverInitData driverInitData;
 	driverInitData.instanceHandle = instanceHandle;
-	driverInitData.cmdShow = cmdShow;
 	driverInitData.windowTitle = "GAL2D Test App";
+	driverInitData.windowWidth = 800;
+	driverInitData.windowHeight = 600;
 
 	std::shared_ptr<GAL2D::GraphicsInterface> graphics = GAL2D::CreateGraphicsInterface(&driverInitData);
 
