@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Math/Vector.h"
+
 namespace GAL2D
 {
 	class Image;
@@ -22,6 +24,7 @@ namespace GAL2D
 
 		virtual bool FromImage(const Image& image) = 0;
 		virtual bool ToImage(Image& image) const = 0;
+		virtual Vector GetSize() const = 0;
 
 	public:
 		UVMode uvMode;

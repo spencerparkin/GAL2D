@@ -117,6 +117,15 @@ namespace GAL2D
 		virtual void RenderConvexPolygon(const std::vector<Vertex>& vertexArray, const AffineTransform& worldTransform, std::shared_ptr<Texture> texture = nullptr) = 0;
 
 		/**
+		 * This is provided for convenience and just calls @ref RenderConvexPolygon under the hood.
+		 * 
+		 * @param[in] rectangle This is the world rectangle to draw.
+		 * @param[in] color This is the solid color to make the rectangle unless a texture is given.
+		 * @param[in] texture If non-null, this is used to draw the rectangle.
+		 */
+		void RenderRectangle(const Rectangle& rectangle, const Color& color, std::shared_ptr<Texture> texture = nullptr);
+
+		/**
 		 * Render text over the top of whatever is in the plane such that it fits inside the given rectangle, taking
 		 * up as much room as possible within that rectangle.
 		 * 
@@ -146,6 +155,12 @@ namespace GAL2D
 		 * Once called, the next frame should be presented.
 		 */
 		virtual void EndRendering() = 0;
+
+		/**
+		 * @param[out] screenSize Will hold the screen resolution.
+		 * @return True is returne if and only if the function is successful.
+		 */
+		virtual bool GetScreenResolution(Vector& screenSize) = 0;
 
 	public:
 		MouseEventHandler mouseEventHandler;

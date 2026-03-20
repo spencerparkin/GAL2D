@@ -365,3 +365,14 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 
 	SwapBuffers(this->deviceContext);
 }
+
+/*virtual*/ bool GraphicsOpenGL::GetScreenResolution(Vector& screenSize)
+{
+	RECT clientRect;
+	if (!GetClientRect(this->windowHandle, &clientRect))
+		return false;
+
+	screenSize.x = double(clientRect.right - clientRect.left);
+	screenSize.y = double(clientRect.bottom - clientRect.top);
+	return true;
+}

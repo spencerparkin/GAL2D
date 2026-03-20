@@ -52,3 +52,14 @@ GraphicsInterface::GraphicsInterface()
 {
 	return false;
 }
+
+void GraphicsInterface::RenderRectangle(const Rectangle& rectangle, const Color& color, std::shared_ptr<Texture> texture /*= nullptr*/)
+{
+	std::vector<Vertex> vertexArray;
+	vertexArray.push_back({ Vector(rectangle.minCorner.x, rectangle.minCorner.y), Vector(0.0, 0.0), color });
+	vertexArray.push_back({ Vector(rectangle.maxCorner.x, rectangle.minCorner.y), Vector(1.0, 0.0), color });
+	vertexArray.push_back({ Vector(rectangle.maxCorner.x, rectangle.maxCorner.y), Vector(1.0, 1.0), color });
+	vertexArray.push_back({ Vector(rectangle.minCorner.x, rectangle.maxCorner.y), Vector(0.0, 1.0), color });
+
+	this->RenderConvexPolygon(vertexArray, AffineTransform(), texture);
+}

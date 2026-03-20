@@ -17,6 +17,7 @@ namespace GAL2D
 
 		virtual bool FromImage(const Image& image) override;
 		virtual bool ToImage(Image& image) const override;
+		virtual Vector GetSize() const override;
 
 		GLuint GetTexture() const;
 

@@ -71,6 +71,11 @@ TextureOpenGL::TextureOpenGL()
 	return false;
 }
 
+/*virtual*/ Vector TextureOpenGL::GetSize() const
+{
+	return Vector((double)this->width, (double)this->height);
+}
+
 GLuint TextureOpenGL::GetTexture() const
 {
 	return this->texture;

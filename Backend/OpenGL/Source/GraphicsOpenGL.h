@@ -36,6 +36,7 @@ namespace GAL2D
 		virtual bool CaptureRegion(const Rectangle& region, Image& image) override;
 		virtual void BeginRendering() override;
 		virtual void EndRendering() override;
+		virtual bool GetScreenResolution(Vector& screenSize) override;
 
 	private:
 		static LRESULT CALLBACK WndProc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam);
