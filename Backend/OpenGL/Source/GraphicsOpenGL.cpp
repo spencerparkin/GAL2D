@@ -239,7 +239,7 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 	glEnd();
 }
 
-/*virtual*/ bool GraphicsOpenGL::RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color)
+/*virtual*/ bool GraphicsOpenGL::RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color, TextAlign textAlign /*= ALIGN_CENTER*/)
 {
 	if (!font.get())
 		return false;
@@ -258,6 +258,8 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// STPTODO: Some of this code should be pushed into the base class so it can be used by other graphics drivers.
 
 	Vector penLocation(0.0, 0.0);
 	
@@ -290,8 +292,32 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 	for (const GlyphQuad& quad : quadArray)
 		textBounds.MinimallyExpandToIncludeRect(quad.localRect);
 
+	GAL2D::Rectangle::AspectRatioMatchMode aspectRatioMatchMode;
+	switch (textAlign)
+	{
+		default:
+		case ALIGN_CENTER:
+		{
+			aspectRatioMatchMode = GAL2D::Rectangle::DELTA_MIN_AND_MAX;
+			break;
+		}
+		case ALIGN_LEFT:
+		{
+			aspectRatioMatchMode = GAL2D::Rectangle::ALL_DELTA_MAX;
+			break;
+		}
+		case ALIGN_RIGHT:
+		{
+			aspectRatioMatchMode = GAL2D::Rectangle::ALL_DELTA_MIN;
+			break;
+		}
+	}
+
+	// Here we calculate the largest rectangle (targetRect) that fits inside
+	// the given rectangle (rectangle) but also matches the aspect ratio of
+	// the the text bounds.
 	Rectangle targetRect = rectangle;
-	targetRect.ContractToMatchAspectRatio(textBounds.AspectRatio());
+	targetRect.ContractToMatchAspectRatio(textBounds.AspectRatio(), aspectRatioMatchMode);
 
 	AffineTransform worldTransform;
 	worldTransform.MakeTransform(textBounds, targetRect);

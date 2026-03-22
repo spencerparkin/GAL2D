@@ -69,6 +69,13 @@ namespace GAL2D
 		GraphicsInterface();
 		virtual ~GraphicsInterface();
 
+		enum TextAlign
+		{
+			ALIGN_LEFT,
+			ALIGN_RIGHT,
+			ALIGN_CENTER
+		};
+
 		/**
 		 * Get the system ready for rendering.  Whatever the rendering context,
 		 * that is up to the underlying driver to configure or decide.
@@ -135,7 +142,7 @@ namespace GAL2D
 		 * @param[in] color This is the color to use for the text.
 		 * @return False returned here indicates failure, and can happen if, for example, the given font doesn't exit or can't be loaded by the driver.
 		 */
-		virtual bool RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color) = 0;
+		virtual bool RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color, TextAlign textAlign = ALIGN_CENTER) = 0;
 
 		/**
 		 * This can be optionally overridden to provide pixel-capture support.

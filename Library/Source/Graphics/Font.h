@@ -13,7 +13,7 @@ namespace GAL2D
 	 * A font is simply a texture atlas coupled with the meta-data needed
 	 * to render out of that altas.
 	 */
-	class Font
+	class Font : public std::enable_shared_from_this<Font>
 	{
 	public:
 		Font(std::shared_ptr<Texture> texture);

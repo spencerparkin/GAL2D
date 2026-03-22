@@ -12,6 +12,14 @@ Rectangle::Rectangle()
 	this->maxCorner.y = -std::numeric_limits<double>::max();
 }
 
+Rectangle::Rectangle(double minX, double maxX, double minY, double maxY)
+{
+	this->minCorner.x = minX;
+	this->maxCorner.x = maxX;
+	this->minCorner.y = minY;
+	this->maxCorner.y = maxY;
+}
+
 Rectangle::Rectangle(const Vector& minCorner, const Vector& maxCorner)
 {
 	this->minCorner = minCorner;
@@ -26,6 +34,17 @@ Rectangle::Rectangle(const Rectangle& rectangle)
 
 /*virtual*/ Rectangle::~Rectangle()
 {
+}
+
+bool Rectangle::IsValid() const
+{
+	if (this->minCorner.x > this->maxCorner.x)
+		return false;
+
+	if (this->minCorner.y > this->maxCorner.y)
+		return false;
+
+	return true;
 }
 
 void Rectangle::operator=(const Rectangle& rectangle)
@@ -57,7 +76,7 @@ void Rectangle::PointToUVs(Vector& UVs, const Vector& point) const
 	UVs.y = (point.y - this->minCorner.y) / this->Height();
 }
 
-void Rectangle::ExpandToMatchAspectRatio(double aspectRatio)
+void Rectangle::ExpandToMatchAspectRatio(double aspectRatio, AspectRatioMatchMode mode /*= DELTA_MIN_AND_MAX*/)
 {
 	double currentAspectRatio = this->AspectRatio();
 
@@ -65,19 +84,53 @@ void Rectangle::ExpandToMatchAspectRatio(double aspectRatio)
 	{
 		double delta = (this->Height() * aspectRatio - this->Width()) / 2.0;
 
-		this->minCorner.x -= delta;
-		this->maxCorner.x += delta;
+		switch (mode)
+		{
+			case DELTA_MIN_AND_MAX:
+			{
+				this->minCorner.x -= delta;
+				this->maxCorner.x += delta;
+				break;
+			}
+			case ALL_DELTA_MIN:
+			{
+				this->minCorner.x -= 2.0 * delta;
+				break;
+			}
+			case ALL_DELTA_MAX:
+			{
+				this->maxCorner.x += 2.0 * delta;
+				break;
+			}
+		}
 	}
 	else if(currentAspectRatio > aspectRatio)
 	{
 		double delta = (this->Width() / aspectRatio - this->Height()) / 2.0;
 
-		this->minCorner.y -= delta;
-		this->maxCorner.y += delta;
+		switch (mode)
+		{
+			case DELTA_MIN_AND_MAX:
+			{
+				this->minCorner.y -= delta;
+				this->maxCorner.y += delta;
+				break;
+			}
+			case ALL_DELTA_MIN:
+			{
+				this->minCorner.y -= 2.0 * delta;
+				break;
+			}
+			case ALL_DELTA_MAX:
+			{
+				this->minCorner.y += 2.0 * delta;
+				break;
+			}
+		}
 	}
 }
 
-void Rectangle::ContractToMatchAspectRatio(double aspectRatio)
+void Rectangle::ContractToMatchAspectRatio(double aspectRatio, AspectRatioMatchMode mode /*= DELTA_MIN_AND_MAX*/)
 {
 	double currentAspectRatio = this->AspectRatio();
 
@@ -85,15 +138,49 @@ void Rectangle::ContractToMatchAspectRatio(double aspectRatio)
 	{
 		double delta = (this->Height() - this->Width() / aspectRatio) / 2.0;
 
-		this->minCorner.y += delta;
-		this->maxCorner.y -= delta;
+		switch (mode)
+		{
+			case DELTA_MIN_AND_MAX:
+			{
+				this->minCorner.y += delta;
+				this->maxCorner.y -= delta;
+				break;
+			}
+			case ALL_DELTA_MIN:
+			{
+				this->minCorner.y += 2.0 * delta;
+				break;
+			}
+			case ALL_DELTA_MAX:
+			{
+				this->maxCorner.y -= 2.0 * delta;
+				break;
+			}
+		}
 	}
 	else if (currentAspectRatio > aspectRatio)
 	{
-		double delta = (this->Height() * aspectRatio - this->Width()) / 2.0;
+		double delta = (this->Width() - this->Height() * aspectRatio) / 2.0;
 
-		this->minCorner.x += delta;
-		this->maxCorner.x -= delta;
+		switch (mode)
+		{
+			case DELTA_MIN_AND_MAX:
+			{
+				this->minCorner.x += delta;
+				this->maxCorner.x -= delta;
+				break;
+			}
+			case ALL_DELTA_MIN:
+			{
+				this->minCorner.x += 2.0 * delta;
+				break;
+			}
+			case ALL_DELTA_MAX:
+			{
+				this->maxCorner.x -= 2.0 * delta;
+				break;
+			}
+		}
 	}
 }
 
@@ -133,6 +220,21 @@ double Rectangle::Height() const
 double Rectangle::AspectRatio() const
 {
 	return this->Width() / this->Height();
+}
+
+void Rectangle::ApplyMarginDelta(double delta)
+{
+	this->minCorner.x -= delta;
+	this->maxCorner.x += delta;
+	this->minCorner.y -= delta;
+	this->maxCorner.y += delta;
+}
+
+bool Rectangle::Intersect(const Rectangle& rectangleA, const Rectangle& rectangleB)
+{
+	// STPTODO: Write this.
+
+	return this->IsValid();
 }
 
 namespace GAL2D
