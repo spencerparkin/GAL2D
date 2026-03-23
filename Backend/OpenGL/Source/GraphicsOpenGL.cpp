@@ -193,8 +193,6 @@ Vector GraphicsOpenGL::CalcWorldMousePos(LPARAM lParam)
 	Vector UVs;
 	windowRegion.PointToUVs(UVs, mousePos);
 
-	UVs.y = 1.0 - UVs.y;
-
 	Vector worldMousePos;
 	this->adjustedWorldRegion.PointFromUVs(UVs, worldMousePos);
 
