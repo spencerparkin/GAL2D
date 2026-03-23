@@ -19,6 +19,8 @@ set(GAL2D_SOURCES
 	Source/Graphics/Image.h
 	Source/Graphics/Font.cpp
 	Source/Graphics/Font.h
+	Source/Graphics/Resource.cpp
+	Source/Graphics/Resource.h
 	Source/ThirdParty/stb_image.cpp
 	Source/ThirdParty/stb_image.h
 	Source/ThirdParty/stb_image_write.cpp

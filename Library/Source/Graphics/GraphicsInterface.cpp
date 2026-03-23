@@ -13,35 +13,85 @@ GraphicsInterface::GraphicsInterface()
 {
 }
 
-/*virtual*/ std::shared_ptr<Texture> GraphicsInterface::MakeTexture(const std::string& texturePath)
+/*virtual*/ void GraphicsInterface::Shutdown()
 {
-	std::shared_ptr<Texture> texture = this->CreateNewTextureObject();
-	
-	if (texture.get())
-	{
-		Image image;
+	this->resourceCache.clear();
+}
 
-		if (!image.Load(texturePath) || !texture->FromImage(image))
+bool GraphicsInterface::ResolveResourcePathAndKey(std::string& resourceKey, std::filesystem::path& resourcePath) const
+{
+	if (resourcePath.is_relative())
+		resourcePath = this->resourceBasePath / resourcePath;
+
+	if (!std::filesystem::exists(resourcePath))
+		return false;
+
+	resourceKey = resourcePath.string();
+
+	std::transform(resourceKey.begin(), resourceKey.end(), resourceKey.begin(), [](unsigned char ch)
 		{
-			texture.reset();
+			if (ch == '\\' || ch == '/')
+				return '|';
+
+			return (char)std::tolower(ch);
+		}
+	);
+
+	return true;
+}
+
+/*virtual*/ std::shared_ptr<Texture> GraphicsInterface::MakeTexture(const std::filesystem::path& texturePath, bool canUseCache /*= true*/)
+{
+	std::filesystem::path resourcePath = texturePath;
+	std::string resourceKey;
+	std::shared_ptr<Texture> texture;
+
+	if (this->ResolveResourcePathAndKey(resourceKey, resourcePath))
+	{
+		if (canUseCache)
+			texture = this->FindResource<Texture>(resourceKey);
+
+		if (!texture.get())
+		{
+			texture = this->CreateNewTextureObject();
+			if (texture.get())
+			{
+				Image image;
+
+				if (!image.Load(resourcePath.string()) || !texture->FromImage(image))
+					texture.reset();
+				else
+					this->resourceCache.insert(std::pair(resourceKey, texture));
+			}
 		}
 	}
 
 	return texture;
 }
 
-/*virtual*/ std::shared_ptr<Font> GraphicsInterface::MakeFont(const std::string& fontPath)
+/*virtual*/ std::shared_ptr<Font> GraphicsInterface::MakeFont(const std::filesystem::path& fontPath, bool canUseCache /*= true*/)
 {
+	std::filesystem::path resourcePath = fontPath;
+	std::string resourceKey;
 	std::shared_ptr<Font> font;
-	std::shared_ptr<Texture> texture = this->CreateNewTextureObject();
 
-	if (texture.get())
+	if (this->ResolveResourcePathAndKey(resourceKey, resourcePath))
 	{
-		font = std::make_shared<Font>(texture);
-		
-		if (!font->Load(fontPath))
+		if (canUseCache)
+			font = this->FindResource<Font>(resourceKey);
+
+		if (!font.get())
 		{
-			font.reset();
+			std::shared_ptr<Texture> texture = this->CreateNewTextureObject();
+			if (texture.get())
+			{
+				font = std::make_shared<Font>(texture);
+
+				if (!font->Load(resourcePath.string()))
+					font.reset();
+				else
+					this->resourceCache.insert(std::pair(resourceKey, font));
+			}
 		}
 	}
 
@@ -62,4 +112,14 @@ void GraphicsInterface::RenderRectangle(const Rectangle& rectangle, const Color&
 	vertexArray.push_back({ Vector(rectangle.minCorner.x, rectangle.maxCorner.y), Vector(0.0, 1.0), color });
 
 	this->RenderConvexPolygon(vertexArray, AffineTransform(), texture);
+}
+
+void GraphicsInterface::SetResourceBasePath(const std::filesystem::path& resourceBasePath)
+{
+	this->resourceBasePath = resourceBasePath;
+}
+
+const std::filesystem::path& GraphicsInterface::GetResourceBasePath() const
+{
+	return this->resourceBasePath;
 }

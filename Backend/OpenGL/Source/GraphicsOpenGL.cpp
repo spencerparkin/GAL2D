@@ -79,6 +79,8 @@ GraphicsOpenGL::GraphicsOpenGL(const DriverInitData* driverInitData)
 
 /*virtual*/ void GraphicsOpenGL::Shutdown()
 {
+	GraphicsInterface::Shutdown();
+
 	wglMakeCurrent(NULL, NULL);
 
 	if (this->openGLContext != NULL)

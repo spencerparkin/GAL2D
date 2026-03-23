@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Rectangle.h"
+#include "Graphics/Resource.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -13,7 +14,7 @@ namespace GAL2D
 	 * A font is simply a texture atlas coupled with the meta-data needed
 	 * to render out of that altas.
 	 */
-	class Font : public std::enable_shared_from_this<Font>
+	class Font : public Resource
 	{
 	public:
 		Font(std::shared_ptr<Texture> texture);

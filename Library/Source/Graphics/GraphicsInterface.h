@@ -8,11 +8,15 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include <filesystem>
+#include <unordered_map>
 
 // STPTODO: Maybe leverage code in font-system I had made years ago to make image and char-to-uv map.  Use freetype lib.
 
 namespace GAL2D
 {
+	class Resource;
+
 	/**
 	 * For simplicity, all polygons use this vertex format, even if
 	 * not all members are used.
@@ -87,7 +91,7 @@ namespace GAL2D
 		/**
 		 * This should get called before the graphics interface is disposed.
 		 */
-		virtual void Shutdown() = 0;
+		virtual void Shutdown();
 
 		/**
 		 * This is called to detect and dispatch keyboard and mouse events.  False is returned
@@ -100,14 +104,14 @@ namespace GAL2D
 		 * 
 		 * @return A valid pointer should be returned here on success; null otherwise.
 		 */
-		virtual std::shared_ptr<Texture> MakeTexture(const std::string& texturePath);
+		virtual std::shared_ptr<Texture> MakeTexture(const std::filesystem::path& texturePath, bool canUseCache = true);
 
 		/**
 		 * Load a font from the given path and return it.
 		 * 
 		 * @return A valid pointer should be returned here on success; null otherwise.
 		 */
-		virtual std::shared_ptr<Font> MakeFont(const std::string& fontPath);
+		virtual std::shared_ptr<Font> MakeFont(const std::filesystem::path& fontPath, bool canUseCache = true);
 
 		/**
 		 * Allocate and return a platform-specific texture object that, once loaded with texel data, can be used for rendering.
@@ -169,9 +173,40 @@ namespace GAL2D
 		 */
 		virtual bool GetScreenResolution(Vector& screenSize) = 0;
 
+		void SetResourceBasePath(const std::filesystem::path& resourceBasePath);
+		const std::filesystem::path& GetResourceBasePath() const;
+
+		/**
+		 * See if a resource is already loaded in the resource cache.
+		 * 
+		 * @param[in] resourceKey See the @ref ResolveResourcePathAndKey function.
+		 */
+		template<typename T>
+		std::shared_ptr<T> FindResource(const std::string& resourceKey)
+		{
+			std::unordered_map<std::string, std::shared_ptr<Resource>>::iterator iter = this->resourceCache.find(resourceKey);
+			if (iter == this->resourceCache.end())
+				return nullptr;
+
+			std::shared_ptr<Resource> resource = iter->second;
+			return std::dynamic_pointer_cast<T>(resource);
+		}
+
+		/**
+		 * Resolve the given path into a fully-qualified path to the desired resource.
+		 * 
+		 * @param[out] resourceKey This key can be used with the @ref FindResource function.
+		 * @param[in,out] resourcePath This should be a relative or fully-qualfied path to the resource.  If relative, it is resolved to the fully-qualified path.
+		 * @return True is returned if we are able to find the full path to the resource on disk.
+		 */
+		bool ResolveResourcePathAndKey(std::string& resourceKey, std::filesystem::path& resourcePath) const;
+
 	public:
+
 		MouseEventHandler mouseEventHandler;
 		KeyboardEventHandler keyboardEventHandler;
 		RenderState renderState;
+		std::filesystem::path resourceBasePath;
+		std::unordered_map<std::string, std::shared_ptr<Resource>> resourceCache;
 	};
 }

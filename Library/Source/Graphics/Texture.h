@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Vector.h"
+#include "Graphics/Resource.h"
 
 namespace GAL2D
 {
@@ -10,7 +11,7 @@ namespace GAL2D
 	 * This is the base class for a platform-specific texture that
 	 * can be used in rendering.
 	 */
-	class Texture
+	class Texture : public Resource
 	{
 	public:
 		enum UVMode
