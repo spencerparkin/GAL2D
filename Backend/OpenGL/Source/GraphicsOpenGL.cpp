@@ -136,19 +136,37 @@ LRESULT GraphicsOpenGL::HandleMessage(HWND msgWindowHandle, UINT message, WPARAM
 		}
 		case WM_LBUTTONDOWN:
 		{
-			if (this->mouseEventHandler)
+			if (this->mouseClickEventHandler)
 			{
 				Vector worldMousePos = this->CalcWorldMousePos(lParam);
-				this->mouseEventHandler(worldMousePos, MouseButton::Left, ButtonState::Down);
+				this->mouseClickEventHandler(worldMousePos, MouseButton::Left, ButtonState::Down);
 			}
 			return 0;
 		}
 		case WM_LBUTTONUP:
 		{
-			if (this->mouseEventHandler)
+			if (this->mouseClickEventHandler)
 			{
 				Vector worldMousePos = this->CalcWorldMousePos(lParam);
-				this->mouseEventHandler(worldMousePos, MouseButton::Left, ButtonState::Up);
+				this->mouseClickEventHandler(worldMousePos, MouseButton::Left, ButtonState::Up);
+			}
+			return 0;
+		}
+		case WM_RBUTTONDOWN:
+		{
+			if (this->mouseClickEventHandler)
+			{
+				Vector worldMousePos = this->CalcWorldMousePos(lParam);
+				this->mouseClickEventHandler(worldMousePos, MouseButton::Right, ButtonState::Down);
+			}
+			return 0;
+		}
+		case WM_RBUTTONUP:
+		{
+			if (this->mouseClickEventHandler)
+			{
+				Vector worldMousePos = this->CalcWorldMousePos(lParam);
+				this->mouseClickEventHandler(worldMousePos, MouseButton::Right, ButtonState::Up);
 			}
 			return 0;
 		}

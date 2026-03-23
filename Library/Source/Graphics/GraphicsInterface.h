@@ -51,7 +51,7 @@ namespace GAL2D
 		Down
 	};
 
-	typedef std::function<void(const Vector&, MouseButton, ButtonState)> MouseEventHandler;
+	typedef std::function<void(const Vector&, MouseButton, ButtonState)> MouseClickEventHandler;
 	typedef std::function<void(int, ButtonState)> KeyboardEventHandler;
 
 	class Texture;
@@ -203,9 +203,12 @@ namespace GAL2D
 
 	public:
 
-		MouseEventHandler mouseEventHandler;
+		MouseClickEventHandler mouseClickEventHandler;
 		KeyboardEventHandler keyboardEventHandler;
 		RenderState renderState;
+
+	private:
+
 		std::filesystem::path resourceBasePath;
 		std::unordered_map<std::string, std::shared_ptr<Resource>> resourceCache;
 	};
