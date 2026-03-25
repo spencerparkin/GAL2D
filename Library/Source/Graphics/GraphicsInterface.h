@@ -52,6 +52,7 @@ namespace GAL2D
 	};
 
 	typedef std::function<void(const Vector&, MouseButton, ButtonState)> MouseClickEventHandler;
+	typedef std::function<void(const Vector&)> MouseMotionEventHandler;
 	typedef std::function<void(int, ButtonState)> KeyboardEventHandler;
 
 	class Texture;
@@ -204,6 +205,7 @@ namespace GAL2D
 	public:
 
 		MouseClickEventHandler mouseClickEventHandler;
+		MouseMotionEventHandler mouseMotionEventHandler;
 		KeyboardEventHandler keyboardEventHandler;
 		RenderState renderState;
 

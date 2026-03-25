@@ -170,6 +170,15 @@ LRESULT GraphicsOpenGL::HandleMessage(HWND msgWindowHandle, UINT message, WPARAM
 			}
 			return 0;
 		}
+		case WM_MOUSEMOVE:
+		{
+			if (this->mouseMotionEventHandler)
+			{
+				Vector worldMousePos = this->CalcWorldMousePos(lParam);
+				this->mouseMotionEventHandler(worldMousePos);
+			}
+			return 0;
+		}
 	}
 
 	return DefWindowProc(msgWindowHandle, message, wParam, lParam);

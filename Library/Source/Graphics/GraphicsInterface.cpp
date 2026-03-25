@@ -30,8 +30,8 @@ bool GraphicsInterface::ResolveResourcePathAndKey(std::string& resourceKey, std:
 
 	std::transform(resourceKey.begin(), resourceKey.end(), resourceKey.begin(), [](unsigned char ch)
 		{
-			if (ch == '\\' || ch == '/')
-				return '|';
+			if (ch == '\\')
+				return '/';
 
 			return (char)std::tolower(ch);
 		}
