@@ -7,13 +7,13 @@
 namespace GAL2D
 {
 	/**
-	 * Implement textures for use in GAL2D with OpenGL.
+	 * Implement textures for use in GAL2D with OpenGL on Windows.
 	 */
-	class TextureOpenGL : public Texture
+	class TextureWinGL : public Texture
 	{
 	public:
-		TextureOpenGL();
-		virtual ~TextureOpenGL();
+		TextureWinGL();
+		virtual ~TextureWinGL();
 
 		virtual bool FromImage(const Image& image) override;
 		virtual bool ToImage(Image& image) const override;

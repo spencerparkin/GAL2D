@@ -19,24 +19,19 @@ namespace GAL2D
 	};
 
 	/**
-	 * Implement GAL2D's graphics interface with OpenGL on Windows.
+	 * This is meant to be a base class from which MS-windows-based drivers can derive.
 	 */
-	class GraphicsOpenGL : public GraphicsInterface
+	class GraphicsMSWindows : public GraphicsInterface
 	{
 	public:
-		GraphicsOpenGL(const DriverInitData* driverInitData);
-		virtual ~GraphicsOpenGL();
+		GraphicsMSWindows(const DriverInitData* driverInitData);
+		virtual ~GraphicsMSWindows();
 
 		virtual bool Setup() override;
 		virtual void Shutdown() override;
 		virtual bool HandleEvents() override;
-		virtual std::shared_ptr<Texture> CreateNewTextureObject() override;
-		virtual void RenderConvexPolygon(const std::vector<Vertex>& vertexArray, const AffineTransform& worldTransform, std::shared_ptr<Texture> texture = nullptr) override;
-		virtual bool RenderText(const std::string& text, std::shared_ptr<Font> font, const Rectangle& rectangle, const Color& color, TextAlign textAlign = ALIGN_CENTER) override;
-		virtual bool CaptureRegion(const Rectangle& region, Image& image) override;
 		virtual void BeginRendering() override;
 		virtual void EndRendering() override;
-		virtual bool GetScreenResolution(Vector& screenSize) override;
 
 	private:
 		static LRESULT CALLBACK WndProc(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam);
@@ -45,15 +40,12 @@ namespace GAL2D
 
 		Vector CalcWorldMousePos(LPARAM lParam);
 
-	private:
+	protected:
 		std::string windowTitle;
 		int windowWidth;
 		int windowHeight;
 		HINSTANCE instanceHandle;
 		HWND windowHandle;
-		HDC deviceContext;
-		HGLRC openGLContext;
-		Rectangle adjustedWorldRegion;
 		bool exitSignaled;
 	};
 }

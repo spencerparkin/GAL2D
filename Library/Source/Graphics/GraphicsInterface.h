@@ -168,12 +168,6 @@ namespace GAL2D
 		 */
 		virtual void EndRendering() = 0;
 
-		/**
-		 * @param[out] screenSize Will hold the screen resolution.
-		 * @return True is returne if and only if the function is successful.
-		 */
-		virtual bool GetScreenResolution(Vector& screenSize) = 0;
-
 		void SetResourceBasePath(const std::filesystem::path& resourceBasePath);
 		const std::filesystem::path& GetResourceBasePath() const;
 

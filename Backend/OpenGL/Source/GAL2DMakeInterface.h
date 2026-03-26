@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsOpenGL.h"
+#include "GraphicsWinGL.h"
 
 namespace GAL2D
 {

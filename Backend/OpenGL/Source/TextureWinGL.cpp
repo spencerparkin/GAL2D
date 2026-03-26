@@ -1,23 +1,23 @@
-#include "TextureOpenGL.h"
+#include "TextureWinGL.h"
 #include "Graphics/Image.h"
 #include <memory>
 
 using namespace GAL2D;
 
-TextureOpenGL::TextureOpenGL()
+TextureWinGL::TextureWinGL()
 {
 	this->texture = 0;
 	this->width = 0;
 	this->height = 0;
 }
 
-/*virtual*/ TextureOpenGL::~TextureOpenGL()
+/*virtual*/ TextureWinGL::~TextureWinGL()
 {
 	if (this->texture != 0)
 		glDeleteTextures(1, &this->texture);
 }
 
-/*virtual*/ bool TextureOpenGL::FromImage(const Image& image)
+/*virtual*/ bool TextureWinGL::FromImage(const Image& image)
 {
 	if (image.GetHeight() == 0 || image.GetWidth() == 0)
 		return false;
@@ -65,18 +65,18 @@ TextureOpenGL::TextureOpenGL()
 	return true;
 }
 
-/*virtual*/ bool TextureOpenGL::ToImage(Image& image) const
+/*virtual*/ bool TextureWinGL::ToImage(Image& image) const
 {
 	// STPTODO: Write this.
 	return false;
 }
 
-/*virtual*/ Vector TextureOpenGL::GetSize() const
+/*virtual*/ Vector TextureWinGL::GetSize() const
 {
 	return Vector((double)this->width, (double)this->height);
 }
 
-GLuint TextureOpenGL::GetTexture() const
+GLuint TextureWinGL::GetTexture() const
 {
 	return this->texture;
 }
