@@ -85,7 +85,7 @@ bool Font::Load(const std::string& fontPath)
 
 			// We're going to work with these variables in UV-space as well.
 			glyphInfo.penOffset.x = double(slot->bitmap_left) / double(atlasImage.GetWidth());
-			glyphInfo.penOffset.y = double(slot->bitmap_top - slot->bitmap.rows) / double(atlasImage.GetHeight());
+			glyphInfo.penOffset.y = (double(slot->bitmap_top) - double(slot->bitmap.rows)) / double(atlasImage.GetHeight());
 			glyphInfo.penAdvance.x = double(slot->advance.x / 64) / double(atlasImage.GetWidth());
 			glyphInfo.penAdvance.y = double(slot->advance.y / 64) / double(atlasImage.GetHeight());
 
@@ -208,5 +208,6 @@ bool Font::CalcTextWidth(const std::string& text, double textHeight, double& tex
 	if (!this->MakeGlyphQuadArray(text, quadArray, textBounds))
 		return false;
 
-	return textBounds.Width() * (textHeight / textBounds.Height());
+	textWidth = textBounds.Width() * (textHeight / textBounds.Height());
+	return true;
 }
