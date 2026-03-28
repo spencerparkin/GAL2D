@@ -173,3 +173,40 @@ bool Font::GetGlyphInfo(char glyphChar, GlyphInfo& glyphInfo) const
 	glyphInfo = iter->second;
 	return true;
 }
+
+bool Font::MakeGlyphQuadArray(const std::string& text, std::vector<GlyphQuad>& quadArray, Rectangle& textBounds) const
+{
+	Vector penLocation(0.0, 0.0);
+
+	for (int i = 0; text.c_str()[i] != '\0'; i++)
+	{
+		char glyphChar = text.c_str()[i];
+
+		Font::GlyphInfo glyphInfo;
+		if (!this->GetGlyphInfo(glyphChar, glyphInfo))
+			return false;
+
+		GlyphQuad quad;
+		quad.localRect = glyphInfo.uvRect + (penLocation + glyphInfo.penOffset - glyphInfo.uvRect.minCorner);
+		quad.uvRect = glyphInfo.uvRect;
+
+		quadArray.push_back(quad);
+
+		penLocation += glyphInfo.penAdvance;
+	}
+
+	for (const GlyphQuad& quad : quadArray)
+		textBounds.MinimallyExpandToIncludeRect(quad.localRect);
+
+	return true;
+}
+
+bool Font::CalcTextWidth(const std::string& text, double textHeight, double& textWidth) const
+{
+	Rectangle textBounds;
+	std::vector<GlyphQuad> quadArray;
+	if (!this->MakeGlyphQuadArray(text, quadArray, textBounds))
+		return false;
+
+	return textBounds.Width() * (textHeight / textBounds.Height());
+}

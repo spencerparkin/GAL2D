@@ -136,38 +136,10 @@ GraphicsWinGL::GraphicsWinGL(const DriverInitData* driverInitData) : GraphicsMSW
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// STPTODO: Some of this code should be pushed into the base class so it can be used by other graphics drivers.
-
-	Vector penLocation(0.0, 0.0);
-	
-	struct GlyphQuad
-	{
-		Rectangle localRect;
-		Rectangle uvRect;
-	};
-
-	std::vector<GlyphQuad> quadArray;
-
-	for (int i = 0; text.c_str()[i] != '\0'; i++)
-	{
-		char glyphChar = text.c_str()[i];
-
-		Font::GlyphInfo glyphInfo;
-		if (!font->GetGlyphInfo(glyphChar, glyphInfo))
-			return false;
-
-		GlyphQuad quad;
-		quad.localRect = glyphInfo.uvRect + (penLocation + glyphInfo.penOffset - glyphInfo.uvRect.minCorner);
-		quad.uvRect = glyphInfo.uvRect;
-
-		quadArray.push_back(quad);
-
-		penLocation += glyphInfo.penAdvance;
-	}
-
-	Rectangle textBounds;
-	for (const GlyphQuad& quad : quadArray)
-		textBounds.MinimallyExpandToIncludeRect(quad.localRect);
+	std::vector<GAL2D::Font::GlyphQuad> quadArray;
+	GAL2D::Rectangle textBounds;
+	if (!font->MakeGlyphQuadArray(text, quadArray, textBounds))
+		return false;
 
 	GAL2D::Rectangle::AspectRatioMatchMode aspectRatioMatchMode;
 	switch (textAlign)
@@ -203,7 +175,7 @@ GraphicsWinGL::GraphicsWinGL(const DriverInitData* driverInitData) : GraphicsMSW
 
 	glColor4d(color.r, color.g, color.b, color.a);
 
-	for (const GlyphQuad& quad : quadArray)
+	for (const GAL2D::Font::GlyphQuad& quad : quadArray)
 	{
 		Rectangle worldRect = worldTransform * quad.localRect;
 		

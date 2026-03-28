@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace GAL2D
 {
@@ -31,7 +32,19 @@ namespace GAL2D
 			Vector penAdvance;
 		};
 
+		struct GlyphQuad
+		{
+			Rectangle localRect;
+			Rectangle uvRect;
+		};
+
 		bool GetGlyphInfo(char glyphChar, GlyphInfo& glyphInfo) const;
+		bool MakeGlyphQuadArray(const std::string& text, std::vector<GlyphQuad>& quadArray, Rectangle& textBounds) const;
+
+		/**
+		 * Calculate the width of the given text, provided it is render in this font at the given height.
+		 */
+		bool CalcTextWidth(const std::string& text, double textHeight, double& textWidth) const;
 
 	private:
 		std::shared_ptr<Texture> texture;
