@@ -34,8 +34,9 @@ namespace GAL2D
 
 		struct GlyphQuad
 		{
-			Rectangle localRect;
-			Rectangle uvRect;
+			Rectangle localRect;	// This is the actual quad (once transformed from UV-space to world space) that should be drawn.
+			Rectangle roomRect;		// This is the quad that takes up space where we need to make room for the text.
+			Rectangle uvRect;		// This is the sub-region of the texture atlas where the glyph texels live.
 		};
 
 		bool GetGlyphInfo(char glyphChar, GlyphInfo& glyphInfo) const;

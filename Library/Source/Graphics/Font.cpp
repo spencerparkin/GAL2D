@@ -188,6 +188,7 @@ bool Font::MakeGlyphQuadArray(const std::string& text, std::vector<GlyphQuad>& q
 
 		GlyphQuad quad;
 		quad.localRect = glyphInfo.uvRect + (penLocation + glyphInfo.penOffset - glyphInfo.uvRect.minCorner);
+		quad.roomRect = glyphInfo.uvRect + (penLocation - glyphInfo.uvRect.minCorner);
 		quad.uvRect = glyphInfo.uvRect;
 
 		quadArray.push_back(quad);
@@ -196,7 +197,7 @@ bool Font::MakeGlyphQuadArray(const std::string& text, std::vector<GlyphQuad>& q
 	}
 
 	for (const GlyphQuad& quad : quadArray)
-		textBounds.MinimallyExpandToIncludeRect(quad.localRect);
+		textBounds.MinimallyExpandToIncludeRect(quad.roomRect);
 
 	return true;
 }

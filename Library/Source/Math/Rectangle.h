@@ -26,7 +26,9 @@ namespace GAL2D
 		};
 
 		bool IsValid() const;
-		bool ContainsPoint(const Vector& point) const;
+		void PrepareForExpansion();
+		bool ContainsPoint(const Vector& point, double eps = 0.0) const;
+		bool ContainsRectangle(const Rectangle& rectangle, double eps = 0.0) const;
 		void PointFromUVs(const Vector& UVs, Vector& point) const;
 		void PointToUVs(Vector& UVs, const Vector& point) const;
 		void ExpandToMatchAspectRatio(double aspectRatio, AspectRatioMatchMode mode = DELTA_MIN_AND_MAX);

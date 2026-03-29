@@ -5,11 +5,7 @@ using namespace GAL2D;
 
 Rectangle::Rectangle()
 {
-	// This rectangle is ready for expansion.
-	this->minCorner.x = std::numeric_limits<double>::max();
-	this->minCorner.y = std::numeric_limits<double>::max();
-	this->maxCorner.x = -std::numeric_limits<double>::max();
-	this->maxCorner.y = -std::numeric_limits<double>::max();
+	this->PrepareForExpansion();
 }
 
 Rectangle::Rectangle(double minX, double maxX, double minY, double maxY)
@@ -53,15 +49,28 @@ void Rectangle::operator=(const Rectangle& rectangle)
 	this->maxCorner = rectangle.maxCorner;
 }
 
-bool Rectangle::ContainsPoint(const Vector& point) const
+void Rectangle::PrepareForExpansion()
 {
-	if (point.x < this->minCorner.x || point.x > this->maxCorner.x)
+	this->minCorner.x = std::numeric_limits<double>::max();
+	this->minCorner.y = std::numeric_limits<double>::max();
+	this->maxCorner.x = -std::numeric_limits<double>::max();
+	this->maxCorner.y = -std::numeric_limits<double>::max();
+}
+
+bool Rectangle::ContainsPoint(const Vector& point, double eps /*= 0.0*/) const
+{
+	if (point.x < this->minCorner.x - eps || point.x > this->maxCorner.x + eps)
 		return false;
 
-	if (point.y < this->minCorner.y || point.y > this->maxCorner.y)
+	if (point.y < this->minCorner.y - eps || point.y > this->maxCorner.y + eps)
 		return false;
 
 	return true;
+}
+
+bool Rectangle::ContainsRectangle(const Rectangle& rectangle, double eps /*= 0.0*/) const
+{
+	return this->ContainsPoint(rectangle.minCorner, eps) && this->ContainsPoint(rectangle.maxCorner, eps);
 }
 
 void Rectangle::PointFromUVs(const Vector& UVs, Vector& point) const
